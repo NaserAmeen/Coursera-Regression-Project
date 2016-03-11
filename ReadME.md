@@ -1,36 +1,11 @@
-# Coursera-Regression-Project
-Final project for Coursera regression class
+# Regression model course project
+An analysis of `mtcars` data file to answer the following two quesiton:
+  * Is an automatic or manual transmission better for MPG?
+  * Quantify the MPG difference between automatic and manual transmissions.
 
----
-title: "An example"
-author: "Naser Ameen"
-date: "March 8, 2016"
-output: html_document
----
-# This is my title
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-
-```r
-summary(cars)
-```
-
-```
-##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00
-```
-
-You can also embed plots, for example:
-
-![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png)
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+### The contents of this Repo include:
+  1. `README.md` file (this file) explanining the contents of this repo
+  2. `Results.pdf` file detaling the executive summary and findings
+  3. `regression_analysis.R` R file to run the analysis
+      
 
