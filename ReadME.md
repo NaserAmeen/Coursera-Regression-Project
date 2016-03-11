@@ -1,23 +1,36 @@
-# Getting-and-cleaning-data-course-project
-Code book, R script, and README files for clean data project
+# Coursera-Regression-Project
+Final project for Coursera regression class
 
-### The contents of this Repo include:
-  1. `README.md` file (this file) explanining the contents of this repo
-  2. `Codebook.md` detailing the transformations performed to UCI HAR dataset to obtain a merged clean data for test and train data
-  3. `run_analysis.R` file that downloads the UCI HAR wearable device data set and creates the text file:
-      * `summaryData.txt` (a summary of mean measurments by subject and activity)
+---
+title: "An example"
+author: "Naser Ameen"
+date: "March 8, 2016"
+output: html_document
+---
+# This is my title
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 
-#### To run the `run_analysis.R` file do the following:
-1. Open RStudio and install packages `dplyr` and `tidyr`
-2. Make sure there is an internet connection
-3. Execute `run_analysis.R` in RStudio
+```r
+summary(cars)
+```
 
-#### `run_analysis.R` will do the following:
-1. Download the UCI HAR files in the current working directory of RSudio
-2. Read the test and train data sets
-3. Apply descriptive names for the activity and features of test and train data set
-4. Remove unwanted variables from the test and train data sets keeping only the mean and std varaiables
-5. Write `test_train_merged.csv`.
-6. Summarise the mean and std by `subject_id` and `activity` by averaging the mean std observations
-7. Write `summaryData.txt`
+```
+##      speed           dist       
+##  Min.   : 4.0   Min.   :  2.00  
+##  1st Qu.:12.0   1st Qu.: 26.00  
+##  Median :15.0   Median : 36.00  
+##  Mean   :15.4   Mean   : 42.98  
+##  3rd Qu.:19.0   3rd Qu.: 56.00  
+##  Max.   :25.0   Max.   :120.00
+```
+
+You can also embed plots, for example:
+
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png)
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
