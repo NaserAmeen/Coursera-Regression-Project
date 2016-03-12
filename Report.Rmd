@@ -1,0 +1,109 @@
+---
+title: "Analysis of predictor factors in vehicle miles per gallon"
+author: Naser Ameen
+date: March 3, 2016
+output: pdf_document
+---
+
+##Executive Summary
+This report details the analysis performed to answer two questions:
+
+1. Whether an automatic or manual transmission will result in lowering miles per gallon (MPG) in a vehicle, and 
+2. What other explanatory factors explain the MPG consumption in a vehicle. The results indicate that in general a manual transmission result in lower MPG consumption. 
+
+In a simple linear regression model using automatic/manual as categorical predictors and MPG as the dependent variable, the independent variable explained 34% of the variation in MPG. ANOVA analysis revealed that the coefficient of the automatic/manual predictor was 7.254, meaning that manual cars consumes 7.254 more MPG than automatic cars. This may have do with the fact that the weight of manual cars higher at 3.768 tons versus automatic cars whose weight is 2.411 tons.
+
+However, when a multi-factor model was utilized to predict MPG, the explanatory power increased. The final model incorporated weight, horsepower, and cylinder in addition to transmission. The model explained 87% of the variation in MPG. The weight coefficient of -2.5 means that holding all other factors constant, a 1 ton increase in weight will lower mpg by 2.5. 
+
+In conclusion, the single most important factor that determines MPG is weight, and this can be seen by doing a forward stepwise regression. All other predictors will only provide an incremental increase in predictive power. Indeed, most of the predictive power of other independents is already incorporated in weight. For example, 8 cylinder vehicles are heavier than 6 cylinders, which are in turn heavier than 4 cylinder cars, and the more horsepower, the more the number of cylinders and the more the weight.
+
+##Report
+This report is divided into five sections. The _Data Setup_ section details the transformation required the analyze the data.  The _Automatic versus Manual_ section analyzes whether or manual transmission will result in lowering MPG in a vehicle, the _Best Model_ section explains other independent variables that have more explanatory power in determining MPG consumption, and the _Conclusions_ provide some more insight into the predictors. Finally, the _Appendix_ section shows supplementary charts and graphs detailing model specification and goodness of fit.    
+
+###Data Setup
+```{r load_packages, include=FALSE}
+# Naser Ameen
+# 3/11/2016
+# Regression of mtcars to determine:
+# 1. If automatic/manual transmission is a signifcant predictor of mpg?
+# 2. What is the best model to predict mpg?
+
+# Get required pacakges
+library(dplyr)
+library(ggplot2)
+cars <-tbl_df(mtcars)
+head(cars,5)
+```
+The mtcars model is a data frame of 32 observations on 11 variables. Brief descriptions of each variable are provided below. In order to ensure that categorical variables are not treated as numerical variables, factor conversions are done on some of the variables.
+```{r var_descriptors_conversions}
+mpg   <- cars$mpg               # mpg Miles/(US) gallon - numerical
+cyl   <- factor(cars$cyl)       # Number of cylinders - categorical
+disp  <- cars$disp              # Displacement (cu.in.) - numerical
+hp    <- cars$hp                # Gross horsepower - numerical
+drat  <- cars$drat              # Rear axle ratio - numerical
+wt    <- cars$wt                # Weight (1000 lbs or 1 ton) - numerical
+qsec  <- cars$qsec              # 1/4 mile time -numerical
+vs    <- cars$vs                # V/S -numerical
+am    <- factor(cars$am)        # Transmission (0 = automatic, 1 = manual) - categorical
+gear  <- factor(cars$gear)      # Number of forward gears - categorical
+carb  <- factor(cars$carb)      # Number of carbureators -categorical
+```
+###Automatic versus Manual
+In order to check whether automatic or manual transmission yields a lower MPG, a simple linear regression with `mpg` as the independent variable and `am` as the dependent variable is done as shown below:
+$$mpg = \beta_0 + \beta_1 \times\ am + \epsilon$$
+```{r auto_man_regress, include=FALSE}
+fit1 <- lm(mpg~am)
+summary(fit1)
+```
+The summary information indicates that: 
+$$\beta_0 =`r fit1$coefficients[1]`$$
+$$\beta_1 = `r fit1$coefficients[2]`$$
+$$R^2 = `r summary(fit1)$r.squared` $$
+Thus the average MPG for automatic cars is `r fit1$coefficients[1]`,  and the difference between the average MPG for automatic cars and manual vehicles is `r fit1$coefficients[2]` can be interpreted as the increment above automatic transmission that can be achieved by manual transmission vehicles. `r summary(fit1)$r.squared*100`% is fit is explained by the `am`. A p-value of `r summary(fit1)$coefficients[2,4] indicates that we can reject the null hypothesis that there is no difference in the average MPG of automatic and manual cars. The residual plot shown in the _Appendix_ indicate that residuals are linear, independent and do not violate the homoscedasticity assumption. The summary statistics are also reported in the _Appendix_.
+
+###Best Model
+The full model using all predictors for MPG is:
+$$\hat{mpg} = \beta_0+ \beta_1 \times\ cyl+ \beta_2 \times\ disp+ \beta_3 \times\ hp+ \beta_4 \times\ drat+\beta_5 \times\ wt+\beta_6 \times\ qsec+\beta_7 \times\ VS+\beta_8 \times\ am+\beta_9 \times\ gear+\beta_{10} \times\ carb$$
+```{r full_regress, include=FALSE}
+fit2 = lm(mpg~.,data=cars)
+summary(fit2)
+```
+The model has a high adjusted R^2^ with a value of `r summary(fit2)$adj.r.squared`.  However, the problem is that the p-values are not significant at the 5% level. The lowest p-value is `r min(summary(fit2)$coefficients[,4])` attributable to the `wt` coefficient. In order to generate a more parsimonious model with better p-values, a backward stepwise regression is performed. The best model is the one with the lowest AIC value. 
+```{r backward_regress, include=FALSE}
+ mydf = data.frame(mpg=mpg, cyl=cyl, disp=disp, hp=hp, drat=drat, wt=wt, qsec=qsec, vs=vs, am=am, gear=gear, carb=carb)
+fit3 = step(lm(mydf$mpg~.,data=mydf),direction = "backward")
+```
+The best model uses the predictors _cyl6_, _cyl8_, _hp_, _wt_, and, _am1_ with the following coefficients:
+```{r best_coeff, echo=FALSE}
+coef(fit3)
+```
+The model has an R^2^ of `r summary(fit3)$r.squared` which is lower than the R^2^ of the full model, as expected. However, the _adjusted_ ^R^ is better at `r summary(fit3)$adj.r.squared`. But even in the final model some of the relationships are spurious as shown by the high p-values for the _am1_ and _cyl8_ predictors. The summary statistics are reported in the _Appendix_.  
+
+###Conclusions
+The adjusted R^2^ of the best model is higher than both the full model and the single predictor automatic/manual model. The best model has less spurious predictors than the full model. But even in the best model, there are spurious predictors. The weight predictor is the single most important predictor of MPG, and any other variable simply provides incremental bumps in explanatory power. Take for example the number of cylinders - the higher the number of cylinders, the more the horsepower, and the more the weight. So weight essentially incorporates some of the predictive powers of cylinder and horsepower.
+
+###Appendix
+
+The summary statistics of automatic or manual transmission is provided below:
+```{r sum_auto_man, echo= FALSE}
+summary(fit1)
+```
+The diagnostic plot of regression residuals are shown below. Both the residual versus fit and the standardized residual versus fit show no major issues with linearity, normality, homoscedasticity, and independence. 
+```{r plot_auto_man, echo=FALSE,fig.width=8, fig.height=6}
+par(mfrow=c(2,2))
+plot(fit1)
+```
+The summary statistics of best fit model is provided below. Some of the p-values are not significant at the 5% level.
+```{r sum_best_fit, echo=FALSE}
+summary(fit3)
+```
+The regression residuals shown below no major linearity, normally homoscedasticity, and independence issues, although there is a slight dip in the residuals in the middle of the data. However, there is no major clustering of the residuals around certain fit values. Thus the model does have some predictive power.
+```{r plot_best, echo=FALSE,fig.width=8, fig.height=6}
+par(mfrow=c(2,2))
+plot(fit3)
+```
+Finally, the correlation matrix shown below highlights the importance of weight as a predictor. The matrix shows that all three prdictors _wt_, _hp_, _cyl_ are negatively correlated with _mpg_, with correlation of at least -77%. However, _hp_ and _cyl_ are also highly positively correlated with _wt_, with correlation factors of at least 65%.
+```{r cor_factor}
+cor_df <- data.frame(mpg=mpg,wt=wt,hp=hp,cyl=as.numeric(cyl))
+cor(cor_df)
+```
